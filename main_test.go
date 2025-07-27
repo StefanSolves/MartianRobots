@@ -35,14 +35,15 @@ func TestTurnRight(t *testing.T) {
 
 }
 
-// NewGrid is a helper for tests, we`ll implement it properly in main.go
-func NewGrid(maxX, maxY int) *Grid {
-	return &Grid{
-		MaxX: maxX,
-		MaxY: maxY,
-		Scents: make(map[string]bool),
-	}
-}
+//  NewGrid is a helper for tests and added to fail the test
+// New grid has been removed from the test file to avoing conflicting with the actual NewGrid function in main.go
+// func NewGrid(maxX, maxY int) *Grid {
+// 	return &Grid{
+// 		MaxX: maxX,
+// 		MaxY: maxY,
+// 		Scents: make(map[string]bool),
+// 	}
+// }
 
 // TestMoveForwardAndScents uses table-driven tests to cover multiple scenarios.
 func TestMoveForwardAndScents(t *testing.T) {

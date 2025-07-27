@@ -1,6 +1,7 @@
 package main
 
-
+import ("fmt"
+)
 
 
 
@@ -52,3 +53,56 @@ func (r *Robot) turnRight() {
 		r.Position.Orientation = 'N'
 	}
 }
+
+
+// NewGrid creates and initializes a new Grid.
+func NewGrid(maxX, maxY int) *Grid {
+	return &Grid{
+		MaxX:   maxX,
+		MaxY:   maxY,
+		Scents: make(map[string]bool),
+	}
+}
+
+// moveForward moves the robot one step forward in its current direction.
+// It also handles boundary checks and scents.
+func (r *Robot) moveForward(grid *Grid) {
+	// A robot that is already lost cannot move.
+	if r.IsLost {
+		return
+	}
+
+	// Calculate the potential next position.
+	nextX, nextY := r.Position.X, r.Position.Y
+	switch r.Position.Orientation {
+	case 'N':
+		nextY++
+	case 'E':
+		nextX++
+	case 'S':
+		nextY--
+	case 'W':
+		nextX--
+	}
+
+	// Check if the next move is off the grid.
+	if nextX < 0 || nextX > grid.MaxX || nextY < 0 || nextY > grid.MaxY {
+		// The robot is about to fall. Check for a scent at its current position.
+		scentPosition := fmt.Sprintf("%d,%d", r.Position.X, r.Position.Y)
+		
+		// If a scent exists at the current spot, the instruction is ignored.
+		if grid.Scents[scentPosition] {
+			return // Ignore the move.
+		}
+
+		// No scent found, so the robot gets lost and leaves one.
+		r.IsLost = true
+		grid.Scents[scentPosition] = true // Leave a scent.
+		return // The robot is lost and does not move from its last position.
+	}
+
+	// If the move is valid and on the grid, update the robot's position.
+	r.Position.X = nextX
+	r.Position.Y = nextY
+}
+
