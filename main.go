@@ -1,6 +1,11 @@
 package main
 
-import ("fmt"
+import (
+	"fmt"
+	"bufio"
+	"os"
+	"strconv"
+	"strings"
 )
 
 
@@ -125,5 +130,63 @@ func (r *Robot) processInstructions(instructions string, grid *Grid) {
 			r.moveForward(grid)
 		// Note: Any character other than L, R, or F is simply ignored.
 		}
+	}
+}
+// main is the entry point of the program.
+func main() {
+	// 1. Check for the input file argument.
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: go run main.go <input_file>")
+		os.Exit(1)
+	}
+
+	// 2. Open and read the file.
+	filePath := os.Args[1]
+	file, err := os.Open(filePath)
+	if err != nil {
+		fmt.Printf("Error opening file: %v\n", err)
+		os.Exit(1)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	var lines []string
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		fmt.Printf("Error reading file: %v\n", err)
+		os.Exit(1)
+	}
+
+	// 3. Parse grid dimensions from the first line.
+	gridParts := strings.Fields(lines[0])
+	maxX, _ := strconv.Atoi(gridParts[0])
+	maxY, _ := strconv.Atoi(gridParts[1])
+	grid := NewGrid(maxX, maxY)
+
+	// 4. Process each robot sequentially.
+	for i := 1; i < len(lines); i += 2 {
+		if i+1 >= len(lines) {
+			break // Avoids error if there's a dangling position line.
+		}
+
+		// Parse initial position.
+		posParts := strings.Fields(lines[i])
+		x, _ := strconv.Atoi(posParts[0])
+		y, _ := strconv.Atoi(posParts[1])
+		orientation := rune(posParts[2][0])
+		robot := &Robot{Position: Position{X: x, Y: y, Orientation: orientation}}
+
+		// Process instructions.
+		instructions := lines[i+1]
+		robot.processInstructions(instructions, grid)
+
+		// 5. Print the final result for the robot.
+		fmt.Printf("%d %d %c", robot.Position.X, robot.Position.Y, robot.Position.Orientation)
+		if robot.IsLost {
+			fmt.Print(" LOST")
+		}
+		fmt.Println()
 	}
 }
