@@ -34,3 +34,53 @@ func TestTurnRight(t *testing.T) {
 	}	
 
 }
+
+// NewGrid is a helper for tests, we`ll implement it properly in main.go
+func NewGrid(maxX, maxY int) *Grid {
+	return &Grid{
+		MaxX: maxX,
+		MaxY: maxY,
+		Scents: make(map[string]bool),
+	}
+}
+
+// TestMoveForwardAndScents uses table-driven tests to cover multiple scenarios.
+func TestMoveForwardAndScents(t *testing.T) {
+	testCases := []struct {
+		name          string
+		grid          *Grid
+		startRobot    Robot
+		expectedRobot Robot
+	}{
+		{
+			name:          "Normal move within grid",
+			grid:          NewGrid(5, 5),
+			startRobot:    Robot{Position: Position{X: 1, Y: 1, Orientation: 'N'}},
+			expectedRobot: Robot{Position: Position{X: 1, Y: 2, Orientation: 'N'}},
+		},
+		{
+			name:          "Robot gets lost at boundary",
+			grid:          NewGrid(5, 3),
+			startRobot:    Robot{Position: Position{X: 3, Y: 3, Orientation: 'N'}},
+			expectedRobot: Robot{Position: Position{X: 3, Y: 3, Orientation: 'N'}, IsLost: true},
+		},
+		{
+			name:          "Robot ignores move due to existing scent",
+			grid:          &Grid{MaxX: 5, MaxY: 3, Scents: map[string]bool{"3,3": true}},
+			startRobot:    Robot{Position: Position{X: 3, Y: 3, Orientation: 'N'}},
+			expectedRobot: Robot{Position: Position{X: 3, Y: 3, Orientation: 'N'}, IsLost: false},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			robotToTest := tc.startRobot
+			// This will fail to compile until we create moveForward
+			robotToTest.moveForward(tc.grid)
+
+			if robotToTest.Position != tc.expectedRobot.Position || robotToTest.IsLost != tc.expectedRobot.IsLost {
+				t.Errorf("Expected robot %+v, but got %+v", tc.expectedRobot, robotToTest)
+			}
+		})
+	}
+}
