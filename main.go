@@ -106,3 +106,24 @@ func (r *Robot) moveForward(grid *Grid) {
 	r.Position.Y = nextY
 }
 
+// processInstructions executes a sequence of instructions for the robot.
+func (r *Robot) processInstructions(instructions string, grid *Grid) {
+	// Loop through each character in the instruction string.
+	for _, instruction := range instructions {
+		// If the robot is lost, stop processing further instructions.
+		if r.IsLost {
+			break
+		}
+		
+		// Execute the command based on the instruction character.
+		switch instruction {
+		case 'L':
+			r.turnLeft()
+		case 'R':
+			r.turnRight()
+		case 'F':
+			r.moveForward(grid)
+		// Note: Any character other than L, R, or F is simply ignored.
+		}
+	}
+}
