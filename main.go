@@ -25,3 +25,30 @@ type Grid struct {
 
 }
 
+// turnLeft rotates the robot 90 degrees to the left
+func (r *Robot) turnLeft() {
+	switch r.Position.Orientation {
+	case 'N' :
+		r.Position.Orientation = 'W'
+	case 'W' :
+		r.Position.Orientation = 'S'
+	case 'S' :
+		r.Position.Orientation = 'E'
+	case 'E' :
+		r.Position.Orientation = 'N'
+	}
+}
+
+// turnRight rotates the robot 90 degrees to the right
+func (r *Robot) turnRight() {
+	switch r.Position.Orientation {
+	case 'N':
+		r.Position.Orientation = 'E'
+	case 'E':
+		r.Position.Orientation = 'S'
+	case 'S':
+		r.Position.Orientation = 'W'
+	case 'W':
+		r.Position.Orientation = 'N'
+	}
+}
