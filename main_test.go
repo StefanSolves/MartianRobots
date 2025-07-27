@@ -1,8 +1,10 @@
 package main
 
-import "testing"
+import (
+	"testing"
 
-
+	
+)
 
 // TestTurnLeft verifies the robot correctly rotates 90 degrees to the left
 
@@ -83,5 +85,22 @@ func TestMoveForwardAndScents(t *testing.T) {
 				t.Errorf("Expected robot %+v, but got %+v", tc.expectedRobot, robotToTest)
 			}
 		})
+	}
+}
+
+// TestProcessInstructions provides a full integration test for a sequence.
+func TestProcessInstructions(t *testing.T) {
+	// Setup
+	grid := NewGrid(5, 3)
+	robot := &Robot{Position: Position{X: 1, Y: 1, Orientation: 'E'}}
+	instructions := "RFRFRFRF"
+	
+	// Action
+	robot.processInstructions(instructions, grid)
+	
+	// Assert
+	expected := Robot{Position: Position{X: 1, Y: 1, Orientation: 'E'}}
+	if robot.Position != expected.Position || robot.IsLost != expected.IsLost {
+		t.Errorf("Expected robot %+v, but got %+v", expected, *robot)
 	}
 }
